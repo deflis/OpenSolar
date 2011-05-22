@@ -1,0 +1,120 @@
+﻿<Window x:Class="Solar.Dialogs.CacheWindow"
+		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		xmlns:local="clr-namespace:Solar.Dialogs"
+		ResizeMode="NoResize"
+		SizeToContent="WidthAndHeight"
+		Title="キャッシュ"
+		ShowInTaskbar="False"
+		WindowStartupLocation="CenterOwner">
+	<Window.DataContext>
+		<local:CacheWindowViewModel />
+	</Window.DataContext>
+	<Window.Resources>
+		<BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+	</Window.Resources>
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+		</Grid.RowDefinitions>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="Auto" />
+			<ColumnDefinition />
+		</Grid.ColumnDefinitions>
+		<TextBlock Grid.Row="0"
+				   Margin="8,8,0,0"
+				   Text="キャッシュ ステータス: " />
+		<TextBlock Grid.Row="1"
+				   Margin="8,0,0,0"
+				   Text="キャッシュ ユーザ: " />
+		<TextBlock Grid.Row="2"
+				   Margin="8,0,0,0"
+				   Text="キャッシュ イメージ: " />
+		<TextBlock Grid.Row="3"
+				   Margin="8,0,0,8"
+				   Text="総使用メモリ: " />
+		<TextBlock Grid.Row="0"
+				   Margin="4,8,8,0"
+				   Grid.Column="1"
+				   Text="{Binding StatusCount}" />
+		<TextBlock Grid.Row="1"
+				   Margin="4,0,8,0"
+				   Grid.Column="1"
+				   Text="{Binding UserCount}" />
+		<TextBlock Grid.Row="2"
+				   Margin="4,0,8,0"
+				   Grid.Column="1"
+				   Text="{Binding ImageCount}" />
+		<TextBlock Grid.Row="3"
+				   Margin="4,0,8,8"
+				   Grid.Column="1"
+				   Text="{Binding TotalSize, StringFormat={}{0:0.00} KB}" />
+		<StackPanel Grid.Row="4"
+					Grid.ColumnSpan="2"
+					Margin="8,0,0,8">
+			<BulletDecorator>
+				<BulletDecorator.Bullet>
+					<Ellipse Width="5"
+							 Height="5"
+							 Fill="{Binding Parent.Foreground, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Grid}}}" />
+				</BulletDecorator.Bullet>
+				<TextBlock Margin="4,0,0,0">
+					<Run Text="[クリア] をクリックすると、" />
+					<LineBreak /><Run Text="現在開いている一覧およびキャッシュすべてをクリアします。" />
+				</TextBlock>
+			</BulletDecorator>
+			<BulletDecorator>
+				<BulletDecorator.Bullet>
+					<Ellipse Width="5"
+							 Height="5"
+							 Fill="{Binding Parent.Foreground, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Grid}}}" />
+				</BulletDecorator.Bullet>
+				<TextBlock Margin="4,0,0,0">
+					<Run Text="[クリーン] をクリックすると、" />
+					<LineBreak /><Run Text="既に使用していないオブジェクトをキャッシュからクリアします。" />
+				</TextBlock>
+			</BulletDecorator>
+		</StackPanel>
+		<Border Grid.Row="5"
+				Grid.ColumnSpan="2"
+				Style="{StaticResource DialogWindowCommandAreaStyle}">
+			<StackPanel Margin="9"
+						Orientation="Horizontal"
+						HorizontalAlignment="Right">
+				<Button Content="クリア"
+						IsDefault="True"
+						Margin="0,0,0,0"
+						HorizontalAlignment="Right"
+						Width="73"
+						Height="21"
+						Command="{Binding ClearCommand}" />
+				<Button Content="クリーン"
+						Margin="10,0,0,0"
+						HorizontalAlignment="Right"
+						Width="73"
+						Height="21"
+						Command="{Binding CleanCommand}" />
+				<Button Content="閉じる"
+						IsCancel="True"
+						Margin="10,0,0,0"
+						HorizontalAlignment="Right"
+						Width="73"
+						Height="21"
+						Click="Button_Click" />
+			</StackPanel>
+		</Border>
+		<Grid Background="#99FFFFFF"
+			  Grid.ColumnSpan="2"
+			  Grid.RowSpan="5"
+			  Visibility="{Binding IsClearing, Converter={StaticResource BooleanToVisibilityConverter}}">
+			<ProgressBar Height="15"
+						 IsIndeterminate="True"
+						 Width="160" />
+		</Grid>
+	</Grid>
+</Window>

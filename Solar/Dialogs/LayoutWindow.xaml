@@ -1,0 +1,607 @@
+﻿<Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		xmlns:local="clr-namespace:Solar.Dialogs"
+		xmlns:models="clr-namespace:Solar.Models"
+		xmlns:filter="clr-namespace:Solar.Filtering"
+		xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		mc:Ignorable="d"
+		x:Class="Solar.Dialogs.LayoutWindow"
+		Title="レイアウト"
+		Height="380"
+		Width="640"
+		ShowInTaskbar="False"
+		WindowStartupLocation="CenterOwner"
+		Style="{StaticResource WindowStyle}"
+		DataContext="{DynamicResource ViewModel}">
+	<Window.Resources>
+		<local:MultiLineConverter x:Key="MultiLineConverter" />
+		<local:LayoutWindowViewModel x:Key="ViewModel" />
+		<DataTemplate DataType="{x:Type filter:FilterSource}" />
+		<DataTemplate DataType="{x:Type filter:ListFilterSource}">
+			<Grid>
+				<TextBox Height="23"
+						 Text="{Binding Path}">
+					<TextBox.ToolTip>
+						<TextBlock>
+						<Run Text="リスト名" /><LineBreak />
+						<LineBreak /><Run Text="以下の形式が使用できます:" />
+						<LineBreak /><Run Text="listname (自分のリストの場合)" />
+						<LineBreak /><Run Text="@username/listname (その他のリストの場合)" />
+						</TextBlock>
+					</TextBox.ToolTip>
+				</TextBox>
+			</Grid>
+		</DataTemplate>
+		<DataTemplate DataType="{x:Type filter:UserFilterSource}">
+			<TextBox Height="23"
+					 Text="{Binding UserName}"
+					 ToolTip="ユーザ名" />
+		</DataTemplate>
+		<DataTemplate DataType="{x:Type filter:SearchFilterSource}">
+			<TextBox Height="23"
+					 Text="{Binding Query}"
+					 ToolTip="検索文字列" />
+		</DataTemplate>
+		<DataTemplate DataType="{x:Type filter:ExtensionFilterSource}">
+			<ComboBox Width="120"
+					  Height="23"
+					  SelectedItem="{Binding Name}"
+					  HorizontalAlignment="Left"
+					  ItemsSource="{Binding FilterSourceScripts, Source={x:Static models:Client.Instance}}" />
+		</DataTemplate>
+
+		<DataTemplate DataType="{x:Type filter:NothingFilterTerms}" />
+		<DataTemplate DataType="{x:Type filter:ContainsFilterTerms}">
+			<Grid>
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition />
+					<ColumnDefinition Width="Auto" />
+				</Grid.ColumnDefinitions>
+				<TextBox ToolTip="指定されたキーワードを含むつぶやきに一致します。(行区切り)"
+						 AcceptsReturn="True"
+						 MinHeight="38"
+						 MaxHeight="102"
+						 VerticalScrollBarVisibility="Visible"
+						 Text="{Binding Keywords, Converter={StaticResource MultiLineConverter}}" />
+				<ComboBox SelectedValue="{Binding Except}"
+						  SelectedValuePath="Tag"
+						  Margin="4,0,0,0"
+						  VerticalAlignment="Top"
+						  Grid.Column="1"
+						  Height="23">
+					<ComboBoxItem Content="抽出"
+								  Tag="False" />
+					<ComboBoxItem Content="除外"
+								  Tag="True" />
+				</ComboBox>
+			</Grid>
+		</DataTemplate>
+		<DataTemplate DataType="{x:Type filter:RegexFilterTerms}">
+			<Grid>
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition />
+					<ColumnDefinition Width="Auto" />
+				</Grid.ColumnDefinitions>
+				<TextBox ToolTip="指定された正規表現にマッチするつぶやきに一致します。(行切り)"
+						 AcceptsReturn="True"
+						 MinHeight="38"
+						 MaxHeight="102"
+						 VerticalScrollBarVisibility="Visible"
+						 Text="{Binding Patterns, Converter={StaticResource MultiLineConverter}}" />
+				<ComboBox SelectedValue="{Binding Except}"
+						  SelectedValuePath="Tag"
+						  Margin="4,0,0,0"
+						  VerticalAlignment="Top"
+						  Grid.Column="1"
+						  Height="23">
+					<ComboBoxItem Content="抽出"
+								  Tag="False" />
+					<ComboBoxItem Content="除外"
+								  Tag="True" />
+				</ComboBox>
+			</Grid>
+		</DataTemplate>
+		<DataTemplate DataType="{x:Type filter:SourceFilterTerms}">
+			<Grid>
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition />
+					<ColumnDefinition Width="Auto" />
+				</Grid.ColumnDefinitions>
+				<TextBox AcceptsReturn="True"
+						 MinHeight="38"
+						 MaxHeight="102"
+						 VerticalScrollBarVisibility="Visible"
+						 Text="{Binding Sources, Converter={StaticResource MultiLineConverter}}">
+					<TextBox.ToolTip>
+						<TextBlock>
+							<Run Text="指定された投稿ソースにマッチするつぶやきに一致します。(行切り)" />
+							<LineBreak /><Run Text="URL も使用できます。" />
+						</TextBlock>
+					</TextBox.ToolTip>
+				</TextBox>
+				<ComboBox SelectedValue="{Binding Except}"
+						  SelectedValuePath="Tag"
+						  Margin="4,0,0,0"
+						  VerticalAlignment="Top"
+						  Grid.Column="1"
+						  Height="23">
+					<ComboBoxItem Content="抽出"
+								  Tag="False" />
+					<ComboBoxItem Content="除外"
+								  Tag="True" />
+				</ComboBox>
+			</Grid>
+		</DataTemplate>
+		<DataTemplate DataType="{x:Type filter:UserFilterTerms}">
+			<Grid>
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition />
+					<ColumnDefinition Width="Auto" />
+				</Grid.ColumnDefinitions>
+				<TextBox ToolTip="指定されたユーザ名にマッチするつぶやきに一致します。(行切り)"
+						 AcceptsReturn="True"
+						 MinHeight="38"
+						 MaxHeight="102"
+						 VerticalScrollBarVisibility="Visible"
+						 Text="{Binding Users, Converter={StaticResource MultiLineConverter}}" />
+				<ComboBox SelectedValue="{Binding Except}"
+						  SelectedValuePath="Tag"
+						  Margin="4,0,0,0"
+						  VerticalAlignment="Top"
+						  Grid.Column="1"
+						  Height="23">
+					<ComboBoxItem Content="抽出"
+								  Tag="False" />
+					<ComboBoxItem Content="除外"
+								  Tag="True" />
+				</ComboBox>
+			</Grid>
+		</DataTemplate>
+		<DataTemplate DataType="{x:Type filter:WhereFilterTerms}">
+			<TextBox ToolTip="指定された WHERE 式に一致するつぶやきに一致します。"
+					 AcceptsReturn="True"
+					 MinHeight="38"
+					 MaxHeight="102"
+					 VerticalScrollBarVisibility="Visible"
+					 Text="{Binding Predicate}" />
+		</DataTemplate>
+		<DataTemplate DataType="{x:Type filter:ExtensionFilterTerms}">
+			<ComboBox Width="120"
+					  Height="23"
+					  SelectedItem="{Binding Name}"
+					  HorizontalAlignment="Left"
+					  ItemsSource="{Binding FilterTermsScripts, Source={x:Static models:Client.Instance}}" />
+		</DataTemplate>
+	</Window.Resources>
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition />
+			<RowDefinition Height="Auto" />
+		</Grid.RowDefinitions>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="Auto" />
+			<ColumnDefinition />
+			<ColumnDefinition Width="Auto" />
+			<ColumnDefinition Width="Auto" />
+		</Grid.ColumnDefinitions>
+		<TreeView Margin="8,8,8,0"
+				  Width="120"
+				  ItemsSource="{Binding TabGroups}"
+				  x:Name="tabsTreeView"
+				  AllowDrop="True"
+				  PreviewMouseDown="tabsTreeView_PreviewMouseDown"
+				  MouseMove="tabsTreeView_MouseMove"
+				  DragOver="tabsTreeView_DragOver"
+				  Drop="tabsTreeView_Drop">
+			<TreeView.Resources>
+				<Style TargetType="{x:Type TreeViewItem}">
+					<Setter Property="IsExpanded"
+							Value="True" />
+					<Setter Property="IsSelected"
+							Value="True" />
+				</Style>
+			</TreeView.Resources>
+			<TreeView.ItemTemplate>
+				<HierarchicalDataTemplate ItemsSource="{Binding}">
+					<TextBlock><Run Text="(カラム)" /></TextBlock>
+					<HierarchicalDataTemplate.ItemTemplate>
+						<DataTemplate>
+							<TextBlock Text="{Binding Name}" />
+						</DataTemplate>
+					</HierarchicalDataTemplate.ItemTemplate>
+				</HierarchicalDataTemplate>
+			</TreeView.ItemTemplate>
+		</TreeView>
+		<TabControl DataContext="{Binding SelectedItem, ElementName=tabsTreeView}"
+					Grid.Column="1"
+					Margin="0,8,8,0"
+					Grid.ColumnSpan="3">
+			<TabItem Header="全般">
+				<StackPanel>
+					<Label Content="タブ名(_T):"
+						   Padding="0"
+						   Margin="0,0,0,4" />
+					<TextBox Text="{Binding Name}"
+							 Margin="0,0,0,8" />
+					<Label Content="更新間隔(_R):"
+						   Padding="0"
+						   Margin="0,0,0,4" />
+					<Grid Margin="0,0,0,8">
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition />
+							<ColumnDefinition Width="36" />
+						</Grid.ColumnDefinitions>
+						<Slider Name="intervalSlider"
+								TickFrequency="0.5"
+								TickPlacement="Both"
+								SmallChange="0.5"
+								LargeChange="2"
+								Minimum="1"
+								Value="{Binding Interval}"
+								IsSnapToTickEnabled="True" />
+						<TextBlock Text="{Binding Value, ElementName=intervalSlider, StringFormat={}{0} 分}"
+								   Grid.Column="1"
+								   VerticalAlignment="Center"
+								   Margin="4,0,0,0" />
+					</Grid>
+					<GroupBox Header="オプション"
+							  VerticalAlignment="Top">
+						<StackPanel Margin="3,3,3,0">
+							<CheckBox Content="新着件数を表示する(_N)"
+									  Margin="0,0,0,4"
+									  IsChecked="{Binding CheckUnreads}"
+									  ToolTip="新着項目の色を変え、またタブ名の横に新着数を表示します。新着数をクリックして新着数を消せます。" />
+							<CheckBox Content="新着項目をポップアップで通知する(_T)"
+									  IsChecked="{Binding NotifyUpdates}"
+									  ToolTip="画面右下に新着項目をポップアップ表示します。" />
+							<Grid>
+								<Grid.ColumnDefinitions>
+									<ColumnDefinition />
+									<ColumnDefinition Width="Auto" />
+								</Grid.ColumnDefinitions>
+								<Grid.RowDefinitions>
+									<RowDefinition />
+									<RowDefinition />
+								</Grid.RowDefinitions>
+								<Label Content="サウンド(_S):"
+									   Padding="0"
+									   Margin="0,8,0,4" />
+								<TextBox Name="notifySoundTextBox"
+										 Text="{Binding NotifySound}"
+										 Grid.Row="1"
+										 Height="23" />
+								<Button Grid.Row="1"
+										Grid.Column="1"
+										Margin="9,0,0,0"
+										Width="73"
+										Height="21"
+										Content="参照..."
+										Click="notifySoundButton_Click" />
+							</Grid>
+						</StackPanel>
+					</GroupBox>
+				</StackPanel>
+			</TabItem>
+			<TabItem Header="ソース">
+				<ListBox ItemsSource="{Binding Sources}"
+						 HorizontalContentAlignment="Stretch"
+						 ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+					<ListBox.ItemContainerStyle>
+						<Style TargetType="{x:Type ListBoxItem}">
+							<Setter Property="Padding"
+									Value="0" />
+						</Style>
+					</ListBox.ItemContainerStyle>
+					<ListBox.ItemTemplate>
+						<DataTemplate>
+							<Grid Margin="0,1,0,1">
+								<Grid.ColumnDefinitions>
+									<ColumnDefinition Width="100" />
+									<ColumnDefinition Width="120" />
+									<ColumnDefinition MinWidth="100" />
+									<ColumnDefinition Width="Auto" />
+								</Grid.ColumnDefinitions>
+								<ComboBox Height="23"
+										  Margin="1,0,2,0"
+										  ToolTip="アカウント"
+										  SelectedValue="{Binding Value.Account}"
+										  SelectedValuePath="UserID"
+										  ItemsSource="{Binding Accounts, Source={StaticResource ViewModel}}" />
+								<ComboBox Grid.Column="1"
+										  Height="23"
+										  Margin="0,0,4,0"
+										  SelectedValue="{Binding Type}"
+										  SelectedValuePath="Tag"
+										  ToolTip="種類">
+									<ComboBoxItem Content="ホーム">
+										<ComboBoxItem.Tag>
+											<x:Type TypeName="filter:HomeFilterSource" />
+										</ComboBoxItem.Tag>
+									</ComboBoxItem>
+									<ComboBoxItem Content="返信">
+										<ComboBoxItem.Tag>
+											<x:Type TypeName="filter:MentionsFilterSource" />
+										</ComboBoxItem.Tag>
+									</ComboBoxItem>
+									<ComboBoxItem Content="送信済み">
+										<ComboBoxItem.Tag>
+											<x:Type TypeName="filter:SentFilterSource" />
+										</ComboBoxItem.Tag>
+									</ComboBoxItem>
+									<ComboBoxItem Content="受信メッセージ">
+										<ComboBoxItem.Tag>
+											<x:Type TypeName="filter:DirectMessagesReceivedFilterSource" />
+										</ComboBoxItem.Tag>
+									</ComboBoxItem>
+									<ComboBoxItem Content="送信メッセージ">
+										<ComboBoxItem.Tag>
+											<x:Type TypeName="filter:DirectMessagesSentFilterSource" />
+										</ComboBoxItem.Tag>
+									</ComboBoxItem>
+									<ComboBoxItem Content="お気に入り">
+										<ComboBoxItem.Tag>
+											<x:Type TypeName="filter:FavoritesFilterSource" />
+										</ComboBoxItem.Tag>
+									</ComboBoxItem>
+									<ComboBoxItem Content="みんなの RT">
+										<ComboBoxItem.Tag>
+											<x:Type TypeName="filter:RetweetedToMeFilterSource" />
+										</ComboBoxItem.Tag>
+									</ComboBoxItem>
+									<ComboBoxItem Content="自分の RT">
+										<ComboBoxItem.Tag>
+											<x:Type TypeName="filter:RetweetedByMeFilterSource" />
+										</ComboBoxItem.Tag>
+									</ComboBoxItem>
+									<ComboBoxItem Content="RT されたつぶやき">
+										<ComboBoxItem.Tag>
+											<x:Type TypeName="filter:RetweetsOfMeFilterSource" />
+										</ComboBoxItem.Tag>
+									</ComboBoxItem>
+									<ComboBoxItem Content="リスト">
+										<ComboBoxItem.Tag>
+											<x:Type TypeName="filter:ListFilterSource" />
+										</ComboBoxItem.Tag>
+									</ComboBoxItem>
+									<ComboBoxItem Content="ユーザ">
+										<ComboBoxItem.Tag>
+											<x:Type TypeName="filter:UserFilterSource" />
+										</ComboBoxItem.Tag>
+									</ComboBoxItem>
+									<ComboBoxItem Content="パブリック">
+										<ComboBoxItem.Tag>
+											<x:Type TypeName="filter:PublicFilterSource" />
+										</ComboBoxItem.Tag>
+									</ComboBoxItem>
+									<ComboBoxItem Content="検索">
+										<ComboBoxItem.Tag>
+											<x:Type TypeName="filter:SearchFilterSource" />
+										</ComboBoxItem.Tag>
+									</ComboBoxItem>
+									<ComboBoxItem Content="スクリプト">
+										<ComboBoxItem.Tag>
+											<x:Type TypeName="filter:ExtensionFilterSource" />
+										</ComboBoxItem.Tag>
+									</ComboBoxItem>
+								</ComboBox>
+								<ContentControl Content="{Binding Value}"
+												Grid.Column="2" />
+								<StackPanel Orientation="Horizontal"
+											Margin="0,0,2,0"
+											Grid.Column="3">
+									<Button Height="21"
+											Width="21"
+											Margin="4,0,0,0"
+											Command="{Binding DataContext.AddSourceCommand, RelativeSource={RelativeSource AncestorType={x:Type TabControl}, Mode=FindAncestor}}"
+											CommandParameter="{Binding}"
+											ToolTip="項目の追加">
+										<Image Source="../Resources/Plus.png"
+											   Width="15"
+											   Height="15" />
+									</Button>
+									<Button Height="21"
+											Width="21"
+											Margin="4,0,0,0"
+											Command="{Binding DataContext.RemoveSourceCommand, RelativeSource={RelativeSource AncestorType={x:Type TabControl}, Mode=FindAncestor}}"
+											CommandParameter="{Binding}"
+											ToolTip="項目の削除">
+										<Image Source="../Resources/Minus.png"
+											   Width="15"
+											   Height="15" />
+									</Button>
+								</StackPanel>
+							</Grid>
+						</DataTemplate>
+					</ListBox.ItemTemplate>
+				</ListBox>
+			</TabItem>
+			<TabItem Header="フィルタ">
+				<ListBox HorizontalContentAlignment="Stretch"
+						 ItemsSource="{Binding Terms}"
+						 ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+					<ListBox.ItemContainerStyle>
+						<Style TargetType="{x:Type ListBoxItem}">
+							<Setter Property="Padding"
+									Value="0" />
+						</Style>
+					</ListBox.ItemContainerStyle>
+					<ListBox.ItemTemplate>
+						<DataTemplate>
+							<Grid Margin="0,1,0,1">
+								<Grid.ColumnDefinitions>
+									<ColumnDefinition Width="120" />
+									<ColumnDefinition MinWidth="120" />
+									<ColumnDefinition Width="Auto" />
+								</Grid.ColumnDefinitions>
+								<ComboBox Grid.ColumnSpan="1"
+										  Height="23"
+										  Margin="1,0,4,0"
+										  SelectedValue="{Binding Type}"
+										  SelectedValuePath="Tag"
+										  VerticalAlignment="Top"
+										  ToolTip="種類">
+									<ComboBoxItem Content="(なし)"
+												  Tag="{x:Type filter:NothingFilterTerms}" />
+									<ComboBoxItem Content="キーワード"
+												  Tag="{x:Type filter:ContainsFilterTerms}" />
+									<ComboBoxItem Content="正規表現"
+												  Tag="{x:Type filter:RegexFilterTerms}" />
+									<ComboBoxItem Content="ソース"
+												  Tag="{x:Type filter:SourceFilterTerms}" />
+									<ComboBoxItem Content="ユーザ"
+												  Tag="{x:Type filter:UserFilterTerms}" />
+									<ComboBoxItem Content="WHERE"
+												  Tag="{x:Type filter:WhereFilterTerms}" />
+									<ComboBoxItem Content="スクリプト"
+												  Tag="{x:Type filter:ExtensionFilterTerms}" />
+								</ComboBox>
+								<ContentControl Content="{Binding Value}"
+												Grid.Column="1" />
+								<StackPanel Orientation="Horizontal"
+											Margin="0,1,2,0"
+											Grid.Column="2"
+											VerticalAlignment="Top">
+									<Button Height="21"
+											Width="21"
+											Margin="4,0,0,0"
+											Command="{Binding DataContext.AddTermsCommand, RelativeSource={RelativeSource AncestorType={x:Type TabControl}, Mode=FindAncestor}}"
+											CommandParameter="{Binding}"
+											ToolTip="項目の追加">
+										<Image Source="../Resources/Plus.png"
+											   Width="15"
+											   Height="15" />
+									</Button>
+									<Button Height="21"
+											Width="21"
+											Margin="4,0,0,0"
+											Command="{Binding DataContext.RemoveTermsCommand, RelativeSource={RelativeSource AncestorType={x:Type TabControl}, Mode=FindAncestor}}"
+											CommandParameter="{Binding}"
+											ToolTip="項目の削除">
+										<Image Source="../Resources/Minus.png"
+											   Width="15"
+											   Height="15" />
+									</Button>
+								</StackPanel>
+							</Grid>
+						</DataTemplate>
+					</ListBox.ItemTemplate>
+				</ListBox>
+			</TabItem>
+			<TabItem Header="全体フィルタ"
+					 Name="tabItem1">
+				<Grid>
+					<ListBox HorizontalContentAlignment="Stretch"
+							 ItemsSource="{Binding DataContext.GlobalTerms, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}"
+							 ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+						<ListBox.ItemContainerStyle>
+							<Style TargetType="{x:Type ListBoxItem}">
+								<Setter Property="Control.Padding"
+										Value="0" />
+							</Style>
+						</ListBox.ItemContainerStyle>
+						<ListBox.ItemTemplate>
+							<DataTemplate>
+								<Grid Margin="0,1,0,1">
+									<Grid.ColumnDefinitions>
+										<ColumnDefinition Width="120" />
+										<ColumnDefinition MinWidth="120" />
+										<ColumnDefinition Width="Auto" />
+									</Grid.ColumnDefinitions>
+									<ComboBox Grid.ColumnSpan="1"
+											  Height="23"
+											  Margin="1,0,4,0"
+											  SelectedValue="{Binding Type}"
+											  SelectedValuePath="Tag"
+											  ToolTip="種類"
+											  VerticalAlignment="Top">
+										<ComboBoxItem Content="(なし)"
+													  Tag="{x:Type filter:NothingFilterTerms}" />
+										<ComboBoxItem Content="キーワード"
+													  Tag="{x:Type filter:ContainsFilterTerms}" />
+										<ComboBoxItem Content="正規表現"
+													  Tag="{x:Type filter:RegexFilterTerms}" />
+										<ComboBoxItem Content="ソース"
+													  Tag="{x:Type filter:SourceFilterTerms}" />
+										<ComboBoxItem Content="ユーザ"
+													  Tag="{x:Type filter:UserFilterTerms}" />
+										<ComboBoxItem Content="WHERE"
+													  Tag="{x:Type filter:WhereFilterTerms}" />
+										<ComboBoxItem Content="スクリプト"
+													  Tag="{x:Type filter:ExtensionFilterTerms}" />
+									</ComboBox>
+									<ContentControl Content="{Binding Value}"
+													Grid.Column="1" />
+									<StackPanel Grid.Column="2"
+												Margin="0,1,2,0"
+												Orientation="Horizontal"
+												VerticalAlignment="Top">
+										<Button Command="{Binding DataContext.AddGlobalTermsCommand, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}}"
+												CommandParameter="{Binding}"
+												Height="21"
+												Margin="4,0,0,0"
+												ToolTip="項目の追加"
+												Width="21">
+											<Image Height="15"
+												   Source="../Resources/Plus.png"
+												   Width="15" />
+										</Button>
+										<Button Command="{Binding DataContext.RemoveGlobalTermsCommand, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}}"
+												CommandParameter="{Binding}"
+												Height="21"
+												Margin="4,0,0,0"
+												ToolTip="項目の削除"
+												Width="21">
+											<Image Height="15"
+												   Source="../Resources/Minus.png"
+												   Width="15" />
+										</Button>
+									</StackPanel>
+								</Grid>
+							</DataTemplate>
+						</ListBox.ItemTemplate>
+					</ListBox>
+				</Grid>
+			</TabItem>
+		</TabControl>
+		<Button Content="OK"
+				Grid.Row="1"
+				Margin="0,9,8,9"
+				Grid.Column="2"
+				Width="73"
+				Height="21"
+				IsDefault="True"
+				Command="{Binding AcceptCommand}" />
+		<Button Content="キャンセル"
+				Grid.Row="1"
+				Margin="0,9,9,9"
+				Grid.Column="3"
+				Width="73"
+				Height="21"
+				IsCancel="True"
+				Command="{Binding CancelCommand}" />
+		<StackPanel Grid.Row="1"
+					Orientation="Horizontal"
+					Margin="9,9,0,9">
+			<Button Height="21"
+					Command="{Binding AddGroupCommand}"
+					Width="21"
+					Margin="0,0,4,0"
+					ToolTip="項目の追加"
+					CommandParameter="{Binding SelectedItem, ElementName=tabsTreeView}">
+				<Image Source="../Resources/Plus.png"
+					   Width="15"
+					   Height="15" />
+			</Button>
+			<Button Height="21"
+					Command="{Binding RemoveGroupCommand}"
+					Width="21"
+					ToolTip="項目の削除"
+					CommandParameter="{Binding SelectedItem, ElementName=tabsTreeView}">
+				<Image Source="../Resources/Minus.png"
+					   Width="15"
+					   Height="15" />
+			</Button>
+		</StackPanel>
+	</Grid>
+</Window>

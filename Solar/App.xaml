@@ -1,0 +1,179 @@
+﻿<Application xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:local="clr-namespace:Solar"
+			 xmlns:interop="clr-namespace:Ignition.Presentation;assembly=Ignition.Presentation"
+			 xmlns:lunar="clr-namespace:Lunar;assembly=Lunar"
+			 xmlns:Microsoft_Windows_Themes="clr-namespace:Microsoft.Windows.Themes;assembly=PresentationFramework.Aero"
+			 x:Class="Solar.App"
+			 Startup="Application_Startup"
+			 SessionEnding="Application_SessionEnding"
+			 StartupUri="Windows/MainWindow.xaml">
+	<Application.Resources>
+		<ResourceDictionary>
+			<ResourceDictionary.MergedDictionaries>
+				<ResourceDictionary Source="/Ignition.Presentation;component/Themes/Generic.xaml" />
+			</ResourceDictionary.MergedDictionaries>
+
+			<!-- begin Luna Styles -->
+			<Style TargetType="{x:Type Button}">
+				<Setter Property="Padding"
+						Value="1,0,1,0" />
+				<Style.Triggers>
+					<DataTrigger Binding="{Binding Source={interop:VisualStylesEnabled RequiresXP=True}}"
+								 Value="True">
+						<Setter Property="Template"
+								Value="{StaticResource LunaButtonTemplate}" />
+					</DataTrigger>
+					<DataTrigger Binding="{Binding Source={interop:VisualStylesEnabled Disabled=True}}"
+								 Value="True">
+						<Setter Property="Template"
+								Value="{StaticResource ClassicButtonTemplate}" />
+					</DataTrigger>
+				</Style.Triggers>
+			</Style>
+			<Style TargetType="{x:Type local:DropDownButton}">
+				<Style.Triggers>
+					<DataTrigger Binding="{Binding Source={interop:VisualStylesEnabled RequiresXP=True}}"
+								 Value="True">
+						<Setter Property="Template"
+								Value="{StaticResource LunaButtonTemplate}" />
+					</DataTrigger>
+					<DataTrigger Binding="{Binding Source={interop:VisualStylesEnabled Disabled=True}}"
+								 Value="True">
+						<Setter Property="Template"
+								Value="{StaticResource ClassicButtonTemplate}" />
+					</DataTrigger>
+				</Style.Triggers>
+			</Style>
+			<!-- end Luna Styles -->
+
+			<Style TargetType="{x:Type ScrollViewer}">
+				<Setter Property="FocusVisualStyle"
+						Value="{x:Null}" />
+			</Style>
+			<Style x:Key="WindowStyle"
+				   TargetType="{x:Type Control}">
+				<Setter Property="Background"
+						Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" />
+				<Setter Property="UseLayoutRounding"
+						Value="True" />
+				<Setter Property="SnapsToDevicePixels"
+						Value="True" />
+				<Setter Property="FontFamily"
+						Value="Segoe UI" />
+			</Style>
+			<Style TargetType="{x:Type ToolTip}">
+				<Setter Property="FontFamily"
+						Value="Segoe UI" />
+			</Style>
+			<Style x:Key="DialogWindowStyle"
+				   TargetType="{x:Type Control}"
+				   BasedOn="{StaticResource WindowStyle}">
+				<Setter Property="Background"
+						Value="{DynamicResource {x:Static SystemColors.WindowBrushKey}}" />
+			</Style>
+			<Style x:Key="DialogWindowCommandAreaStyle"
+				   TargetType="{x:Type Border}">
+				<Setter Property="Background"
+						Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" />
+				<Setter Property="BorderBrush"
+						Value="#FFDFDFDF" />
+				<Setter Property="BorderThickness"
+						Value="0,1,0,0" />
+			</Style>
+			<Style TargetType="{x:Type Hyperlink}">
+				<Style.Triggers>
+					<Trigger Property="IsMouseOver"
+							 Value="True">
+						<Setter Property="TextDecorations"
+								Value="Underline" />
+					</Trigger>
+				</Style.Triggers>
+				<Setter Property="Foreground"
+						Value="{Binding Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type TextBlock}}}" />
+				<Setter Property="TextDecorations"
+						Value="{x:Null}" />
+				<Setter Property="FocusVisualStyle"
+						Value="{x:Null}" />
+			</Style>
+			<Style x:Key="UserImageButton"
+				   TargetType="{x:Type Button}">
+				<Setter Property="FocusVisualStyle"
+						Value="{x:Null}" />
+				<Setter Property="Template">
+					<Setter.Value>
+						<ControlTemplate TargetType="{x:Type Button}">
+							<Border Name="effectLayer">
+								<ContentPresenter Margin="{TemplateBinding Padding}"
+												  RecognizesAccessKey="True"
+												  SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+							</Border>
+							<ControlTemplate.Triggers>
+								<MultiDataTrigger>
+									<MultiDataTrigger.Conditions>
+										<Condition Binding="{Binding IsMouseOver, RelativeSource={RelativeSource Self}}"
+												   Value="True" />
+										<Condition Binding="{Binding Source={x:Static local:App.IsEffectSupported}}"
+												   Value="True" />
+									</MultiDataTrigger.Conditions>
+									<Setter TargetName="effectLayer"
+											Property="Effect">
+										<Setter.Value>
+											<DropShadowEffect ShadowDepth="0"
+															  Opacity="0.5"
+															  BlurRadius="4" />
+										</Setter.Value>
+									</Setter>
+								</MultiDataTrigger>
+							</ControlTemplate.Triggers>
+						</ControlTemplate>
+					</Setter.Value>
+				</Setter>
+				<Style.Triggers>
+					<DataTrigger Binding="{Binding Source={x:Static local:App.IsEffectSupported}}"
+								 Value="True">
+						<Setter Property="Effect">
+							<Setter.Value>
+								<DropShadowEffect ShadowDepth="0"
+												  Opacity="0.75"
+												  BlurRadius="4" />
+							</Setter.Value>
+						</Setter>
+					</DataTrigger>
+				</Style.Triggers>
+			</Style>
+			<Style x:Key="StatusCommandButton"
+				   TargetType="{x:Type Button}">
+				<Setter Property="FocusVisualStyle"
+						Value="{x:Null}" />
+				<Setter Property="Template">
+					<Setter.Value>
+						<ControlTemplate TargetType="{x:Type Button}">
+							<ContentPresenter Margin="{TemplateBinding Padding}"
+											  RecognizesAccessKey="True"
+											  SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+						</ControlTemplate>
+					</Setter.Value>
+				</Setter>
+				<Style.Triggers>
+					<MultiDataTrigger>
+						<MultiDataTrigger.Conditions>
+							<Condition Binding="{Binding IsMouseOver, RelativeSource={RelativeSource Self}}"
+									   Value="True" />
+							<Condition Binding="{Binding Source={x:Static local:App.IsEffectSupported}}"
+									   Value="True" />
+						</MultiDataTrigger.Conditions>
+						<Setter Property="Effect">
+							<Setter.Value>
+								<DropShadowEffect Color="White"
+												  ShadowDepth="0"
+												  Opacity="0.5"
+												  BlurRadius="4" />
+							</Setter.Value>
+						</Setter>
+					</MultiDataTrigger>
+				</Style.Triggers>
+			</Style>
+		</ResourceDictionary>
+	</Application.Resources>
+</Application>

@@ -1,0 +1,371 @@
+﻿<Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		xmlns:local="clr-namespace:Solar"
+		xmlns:filter="clr-namespace:Solar.Filtering"
+		xmlns:lunar="clr-namespace:Lunar;assembly=Lunar"
+		x:Class="Solar.QueryResultWindow"
+		WindowStartupLocation="CenterOwner"
+		SizeToContent="WidthAndHeight"
+		SizeChanged="Window_SizeChanged">
+	<Window.Resources>
+		<BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+		<local:NegativeBooleanToVisibilityConverter x:Key="NegativeBooleanToVisibilityConverter" />
+		<CollectionViewSource x:Key="Source"
+							  Source="{Binding Statuses}" />
+	</Window.Resources>
+	<Window.Style>
+		<StaticResource ResourceKey="WindowStyle" />
+	</Window.Style>
+	<Window.DataContext>
+		<local:QueryResultWindowViewModel />
+	</Window.DataContext>
+	<Window.InputBindings>
+		<KeyBinding Command="{Binding CloseCommand}"
+					Key="Escape" />
+	</Window.InputBindings>
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition />
+		</Grid.RowDefinitions>
+		<Border x:Name="top"
+				BorderThickness="0,0,0,1"
+				BorderBrush="{StaticResource {x:Static SystemColors.ControlDarkDarkBrushKey}}"
+				Visibility="{Binding IsSavableOrSearch, Converter={StaticResource BooleanToVisibilityConverter}}">
+			<Grid>
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition />
+					<ColumnDefinition Width="Auto" />
+					<ColumnDefinition Width="Auto" />
+				</Grid.ColumnDefinitions>
+				<ContentControl Margin="8"
+								Content="{Binding Source}">
+					<ContentControl.Resources>
+						<DataTemplate DataType="{x:Type filter:SearchFilterSource}">
+							<TextBox Height="24"
+									 Text="{Binding Query}"
+									 Loaded="TextBox_Loaded"
+									 KeyDown="TextBox_KeyDown" />
+						</DataTemplate>
+						<DataTemplate DataType="{x:Type filter:SearchUsersFilterSource}">
+							<TextBox Height="24"
+									 Text="{Binding Query}"
+									 Loaded="TextBox_Loaded"
+									 KeyDown="TextBox_KeyDown" />
+						</DataTemplate>
+						<DataTemplate DataType="{x:Type filter:SearchCacheFilterSource}">
+							<TextBox Height="24"
+									 Text="{Binding Query}"
+									 Loaded="TextBox_Loaded"
+									 KeyDown="TextBox_KeyDown" />
+						</DataTemplate>
+						<DataTemplate DataType="{x:Type filter:QueryCacheFilterSource}">
+							<TextBox MinHeight="24"
+									 AcceptsReturn="True"
+									 Text="{Binding Query}"
+									 Loaded="TextBox_Loaded"
+									 PreviewKeyDown="TextBox_KeyDown" />
+						</DataTemplate>
+						<DataTemplate DataType="{x:Type filter:UserFilterSource}">
+							<Grid DataContext="{Binding DataContext, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}">
+								<StackPanel>
+									<Grid Margin="0,0,0,8">
+										<Grid.ColumnDefinitions>
+											<ColumnDefinition Width="Auto" />
+											<ColumnDefinition />
+											<ColumnDefinition Width="Auto" />
+											<ColumnDefinition Width="Auto" />
+										</Grid.ColumnDefinitions>
+										<Grid.RowDefinitions>
+											<RowDefinition Height="Auto" />
+											<RowDefinition />
+										</Grid.RowDefinitions>
+										<Button Command="{Binding UserDetailsCommand}"
+												Style="{DynamicResource UserImageButton}"
+												Margin="0,0,8,0"
+												Grid.RowSpan="2">
+											<local:IconDisplay Source="{Binding User.ProfileImage, Mode=OneWay}"
+															   Width="48"
+															   Height="48" />
+										</Button>
+										<StackPanel Grid.Column="1"
+													Grid.RowSpan="2">
+											<TextBlock><Bold><Hyperlink Command="{Binding UserDetailsCommand}"><Run Text="{Binding User.Name, Mode=OneWay}" /></Hyperlink></Bold><LineBreak /><Run Text="{Binding User.FullName, Mode=OneWay}" /></TextBlock>
+											<TextBlock Text="(protected)"
+													   Visibility="{Binding User.Protected, Converter={StaticResource BooleanToVisibilityConverter}}" />
+										</StackPanel>
+										<Button Grid.Column="2"
+												Height="22"
+												Width="22"
+												Padding="1"
+												Margin="1,1,8,1"
+												Command="{Binding RefreshCommand}">
+											<Image Source="../Resources/Refresh.png" />
+										</Button>
+										<local:DropDownButton Width="22"
+															  Height="22"
+															  Grid.Column="3"
+															  Padding="1,1,0,0"
+															  Margin="1">
+											<local:DropDownButton.DropDownMenu>
+												<ContextMenu>
+													<MenuItem Header="この一覧のタブを作成する(_N)"
+															  Command="{Binding AddToTabCommand}" />
+													<MenuItem Header="フォローする(_F)"
+															  IsCheckable="True"
+															  IsChecked="{Binding IsUserFollowing}"
+															  Command="{Binding FollowCommand}" />
+													<Separator />
+													<MenuItem Header="ブロックする(_B)"
+															  IsCheckable="True"
+															  IsChecked="{Binding IsUserBlocking}"
+															  Command="{Binding BlockCommand}" />
+													<MenuItem Header="スパムとして報告する(_S)"
+															  Command="{Binding ReportForSpamCommand}" />
+													<Separator />
+													<MenuItem Command="{Binding ShowListsCommand}">
+														<MenuItem.Header>
+															<TextBlock Text="{Binding User.Name, StringFormat={}{0} によるリスト}" />
+														</MenuItem.Header>
+													</MenuItem>
+													<MenuItem Header="フォローしているリスト(_S)"
+															  Command="{Binding ShowSubscriptionsCommand}" />
+													<MenuItem Header="フォローされているリスト(_M)"
+															  Command="{Binding ShowMembershipsCommand}" />
+												</ContextMenu>
+											</local:DropDownButton.DropDownMenu>
+											<TextBlock FontFamily="Marlett"
+													   Text="6"
+													   FontSize="14" />
+										</local:DropDownButton>
+									</Grid>
+									<Grid Height="32"
+										  Margin="0,0,0,8">
+										<Grid.RowDefinitions>
+											<RowDefinition Height="Auto" />
+										</Grid.RowDefinitions>
+										<Grid.ColumnDefinitions>
+											<ColumnDefinition />
+											<ColumnDefinition Width="Auto" />
+											<ColumnDefinition />
+											<ColumnDefinition Width="Auto" />
+											<ColumnDefinition />
+											<ColumnDefinition Width="Auto" />
+											<ColumnDefinition />
+										</Grid.ColumnDefinitions>
+										<TextBlock Grid.Column="0"><Bold><Run Text="{Binding User.StatusesCount, Mode=OneWay}" /></Bold><LineBreak /><Run Text="tweets" /></TextBlock>
+										<Rectangle Grid.Column="1"
+												   Fill="{DynamicResource {x:Static SystemColors.ControlDarkBrushKey}}"
+												   Margin="8,0"
+												   Width="1" />
+										<TextBlock Grid.Column="2"><Hyperlink Command="{Binding GetFollowingCommand}"><Bold><Run Text="{Binding User.FollowingCount, Mode=OneWay}" /></Bold><LineBreak /><Run Text="following" /></Hyperlink></TextBlock>
+										<Rectangle Grid.Column="3"
+												   Fill="{DynamicResource {x:Static SystemColors.ControlDarkBrushKey}}"
+												   Margin="8,0"
+												   Width="1" />
+										<TextBlock Grid.Column="4"><Hyperlink Command="{Binding GetFollowersCommand}"><Bold><Run Text="{Binding User.FollowersCount, Mode=OneWay}" /></Bold><LineBreak /><Run Text="followers" /></Hyperlink></TextBlock>
+										<Rectangle Grid.Column="5"
+												   Fill="{DynamicResource {x:Static SystemColors.ControlDarkBrushKey}}"
+												   Margin="8,0"
+												   Width="1" />
+										<TextBlock Grid.Column="6"><Hyperlink Command="{Binding GetFavoritesCommand}"><Bold><Run Text="{Binding User.FavouritesCount, Mode=OneWay}" /></Bold><LineBreak /><Run Text="favorites" /></Hyperlink></TextBlock>
+									</Grid>
+									<TextBlock Visibility="{Binding HasUserLocation, Converter={StaticResource BooleanToVisibilityConverter}}"><Bold><Run Text="現在地 " /></Bold><Run Text="{Binding User.Location, Mode=OneWay}" /></TextBlock>
+									<TextBlock Visibility="{Binding HasUserWebSite, Converter={StaticResource BooleanToVisibilityConverter}}"><Bold><Run Text="Web " /></Bold><Hyperlink Foreground="{DynamicResource {x:Static SystemColors.HotTrackBrushKey}}"
+																																														 Command="{Binding ShowWebSiteCommand}"><Run Text="{Binding User.WebSite, Mode=OneWay}" /></Hyperlink></TextBlock>
+									<Grid MaxWidth="{Binding DataContext.MaxUserDescriptionWidth, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}">
+										<TextBlock Width="{Binding Parent.ActualWidth, RelativeSource={RelativeSource Self}}"
+												   TextTrimming="CharacterEllipsis"
+												   Visibility="{Binding HasUserDescription, Converter={StaticResource BooleanToVisibilityConverter}}">
+											<TextBlock.ToolTip>
+												<ToolTip HorizontalOffset="-6"
+														 VerticalOffset="-2"
+														 Placement="Relative"
+														 MaxWidth="{Binding PlacementTarget.Parent.Parent.ActualWidth, RelativeSource={RelativeSource Self}}">
+													<TextBlock TextWrapping="Wrap">
+														<Bold><Run Text="自己紹介 " /></Bold><Run Text="{Binding User.Description, Mode=OneWay}" />
+													</TextBlock>
+												</ToolTip>
+											</TextBlock.ToolTip>
+											<Bold><Run Text="自己紹介 " /></Bold><Run Text="{Binding UserDescription, Mode=OneWay}" />
+										</TextBlock>
+									</Grid>
+								</StackPanel>
+								<Grid Background="#99FFFFFF"
+									  Visibility="{Binding IsLoadingUser, Converter={StaticResource BooleanToVisibilityConverter}}"
+									  Margin="-8">
+									<ProgressBar Height="15"
+												 IsIndeterminate="True"
+												 Width="160" />
+								</Grid>
+								<Grid Background="#99FFFFFF"
+									  Visibility="{Binding HasUserErrorText, Converter={StaticResource BooleanToVisibilityConverter}}"
+									  Margin="-8">
+									<StackPanel HorizontalAlignment="Center"
+												VerticalAlignment="Center">
+										<TextBlock Text="{Binding UserErrorText}"
+												   HorizontalAlignment="Center" />
+										<Button Margin="0,9,0,0"
+												Content="再読み込み"
+												Width="73"
+												Height="21"
+												Command="{Binding RefreshCommand}" />
+									</StackPanel>
+								</Grid>
+							</Grid>
+						</DataTemplate>
+						<DataTemplate DataType="{x:Type filter:FilterSource}">
+							<Grid DataContext="{Binding DataContext, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}">
+								<Grid.ColumnDefinitions>
+									<ColumnDefinition Width="Auto" />
+									<ColumnDefinition />
+								</Grid.ColumnDefinitions>
+								<Grid.Style>
+									<Style TargetType="{x:Type Grid}">
+										<Style.Triggers>
+											<DataTrigger Binding="{Binding DataContext.User, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}"
+														 Value="{x:Null}">
+												<Setter Property="Visibility"
+														Value="Collapsed" />
+											</DataTrigger>
+										</Style.Triggers>
+									</Style>
+								</Grid.Style>
+								<Button MaxHeight="48"
+										Style="{StaticResource UserImageButton}"
+										VerticalAlignment="Top"
+										Background="Transparent"
+										BorderBrush="{x:Null}"
+										Command="{Binding StatusesListBoxCommandHandler.UserDetailsCommand}"
+										CommandParameter="{Binding User}">
+									<Grid>
+										<Grid.ColumnDefinitions>
+											<ColumnDefinition />
+											<ColumnDefinition Width="Auto" />
+										</Grid.ColumnDefinitions>
+										<Grid.RowDefinitions>
+											<RowDefinition />
+											<RowDefinition Height="Auto" />
+										</Grid.RowDefinitions>
+										<Image Source="{Binding User.ProfileImage}"
+											   Grid.ColumnSpan="2"
+											   Grid.RowSpan="2"
+											   Stretch="UniformToFill"
+											   VerticalAlignment="Center"
+											   Width="48" />
+										<Image Source="../Resources/Protected.png"
+											   Grid.Column="1"
+											   Grid.Row="1"
+											   Visibility="{Binding User.Protected, Converter={StaticResource BooleanToVisibilityConverter}}" />
+									</Grid>
+								</Button>
+								<StackPanel Margin="7,0,0,0"
+											Grid.Column="1">
+									<TextBlock Text="{Binding User.Name}"
+											   FontWeight="Bold" />
+									<TextBlock Text="{Binding User.FullName}" />
+								</StackPanel>
+							</Grid>
+						</DataTemplate>
+					</ContentControl.Resources>
+				</ContentControl>
+				<Button VerticalAlignment="Top"
+						Grid.Column="1"
+						Height="22"
+						Width="22"
+						Padding="1"
+						Margin="1,9,8,9"
+						Command="{Binding RefreshCommand}">
+					<Button.Style>
+						<Style TargetType="{x:Type Button}"
+							   BasedOn="{StaticResource {x:Type Button}}">
+							<Style.Triggers>
+								<DataTrigger Binding="{Binding IsUser}"
+											 Value="True">
+									<Setter Property="Visibility"
+											Value="Collapsed" />
+								</DataTrigger>
+							</Style.Triggers>
+						</Style>
+					</Button.Style>
+					<Image Source="../Resources/Refresh.png" />
+				</Button>
+				<local:DropDownButton VerticalAlignment="Top"
+									  Grid.Column="2"
+									  Height="22"
+									  Width="22"
+									  Padding="1,1,0,0"
+									  Margin="0,9,9,9">
+					<local:DropDownButton.Style>
+						<Style TargetType="{x:Type local:DropDownButton}"
+							   BasedOn="{StaticResource {x:Type local:DropDownButton}}">
+							<Setter Property="Visibility"
+									Value="{Binding IsSavable, Converter={StaticResource BooleanToVisibilityConverter}}" />
+							<Style.Triggers>
+								<DataTrigger Binding="{Binding IsUser}"
+											 Value="True">
+									<Setter Property="Visibility"
+											Value="Collapsed" />
+								</DataTrigger>
+							</Style.Triggers>
+						</Style>
+					</local:DropDownButton.Style>
+					<local:DropDownButton.DropDownMenu>
+						<ContextMenu>
+							<MenuItem Header="この一覧のタブを作成する(_N)"
+									  Command="{Binding AddToTabCommand}" />
+						</ContextMenu>
+					</local:DropDownButton.DropDownMenu>
+					<TextBlock FontFamily="Marlett"
+							   Text="6"
+							   FontSize="14" />
+				</local:DropDownButton>
+			</Grid>
+		</Border>
+		<local:StatusesListBox x:Name="statusesListBox"
+							   SearchAvailable="{Binding IsNotSearch}"
+							   RequestNewPage="statusesListBox_RequestNewPage"
+							   ItemsSource="{Binding Source={StaticResource Source}}"
+							   SelectedIndex="0"
+							   Command="{Binding StatusesListBoxCommandHandler.DoubleClickCommand}"
+							   CommandHandler="{Binding StatusesListBoxCommandHandler}"
+							   MinWidth="320"
+							   MinHeight="57"
+							   BorderThickness="0"
+							   Grid.Row="1" />
+		<ContentControl Content="{Binding Source}"
+						Visibility="{Binding HasItems, ElementName=statusesListBox, Converter={StaticResource NegativeBooleanToVisibilityConverter}}"
+						Grid.Row="1"
+						HorizontalAlignment="Center"
+						VerticalAlignment="Center">
+			<ContentControl.Resources>
+				<DataTemplate DataType="{x:Type filter:FilterSource}">
+					<TextBlock Name="textBlock"
+							   Text="結果はありませんでした" />
+					<DataTemplate.Triggers>
+						<DataTrigger Binding="{Binding DataContext.IsSearchAndEmpty, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}"
+									 Value="True">
+							<Setter TargetName="textBlock"
+									Property="Text"
+									Value="開始するには、検索ボックスに入力してください" />
+						</DataTrigger>
+						<DataTrigger Binding="{Binding DataContext.HasErrorText, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}"
+									 Value="True">
+							<Setter TargetName="textBlock"
+									Property="Text"
+									Value="{Binding DataContext.ErrorText, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}" />
+						</DataTrigger>
+					</DataTemplate.Triggers>
+				</DataTemplate>
+			</ContentControl.Resources>
+		</ContentControl>
+		<Grid Grid.RowSpan="1"
+			  Background="#99FFFFFF"
+			  Visibility="{Binding IsLoading, Converter={StaticResource BooleanToVisibilityConverter}}"
+			  Grid.Row="1">
+			<ProgressBar Height="15"
+						 Width="160"
+						 IsIndeterminate="True" />
+		</Grid>
+	</Grid>
+</Window>

@@ -1,0 +1,70 @@
+﻿<Window x:Class="Solar.Dialogs.AboutWindow"
+		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		xmlns:local="clr-namespace:Solar"
+		xmlns:dialogs="clr-namespace:Solar.Dialogs"
+		Title="Solar について"
+		Style="{StaticResource DialogWindowStyle}"
+		WindowStartupLocation="CenterOwner"
+		ShowInTaskbar="False"
+		SizeToContent="WidthAndHeight"
+		ResizeMode="NoResize">
+	<Window.DataContext>
+		<dialogs:AboutWindowViewModel />
+	</Window.DataContext>
+	<Window.Resources>
+		<Style TargetType="{x:Type Hyperlink}"
+			   BasedOn="{StaticResource {x:Type Hyperlink}}">
+			<Setter Property="Foreground"
+					Value="{DynamicResource {x:Static SystemColors.HotTrackBrushKey}}" />
+		</Style>
+	</Window.Resources>
+	<Grid Width="440">
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition />
+			<RowDefinition Height="Auto" />
+		</Grid.RowDefinitions>
+		<Grid ClipToBounds="True">
+			<Image Margin="0,-16,0,-16"
+				   Source="../Resources/Logo.png"
+				   Width="800"
+				   Height="100" />
+		</Grid>
+		<Border Grid.Row="3"
+				Style="{StaticResource DialogWindowCommandAreaStyle}">
+			<Button IsDefault="True"
+					IsCancel="True"
+					Content="OK"
+					Height="21"
+					HorizontalAlignment="Right"
+					Margin="0,9,9,9"
+					Width="73"
+					Click="Button_Click" />
+		</Border>
+		<TextBlock Grid.Row="1"
+				   Margin="8,8,0,0">
+			<Run Text="Version " /><Run Text="{Binding Source={x:Static local:App.AssemblyVersion}, Mode=OneWay}" />
+			<LineBreak /><Run Text="Created by " /><Hyperlink Command="{Binding OpenUriCommand}"
+															  CommandParameter="http://twitter.com/mfakane"><Run Text="@mfakane" /></Hyperlink>
+			<Run Text="(" /><Hyperlink Command="{Binding OpenUriCommand}"
+									   CommandParameter="http://star2.glasscore.net/"><Run Text="http://star2.glasscore.net/" /></Hyperlink><Run Text=")" />
+			<LineBreak />
+			<LineBreak /><Run Text="Using following components:" />
+		</TextBlock>
+		<TextBlock Grid.Row="2"
+				   Margin="24,0,0,8">
+			<Hyperlink Command="{Binding OpenUriCommand}"
+					   CommandParameter="http://msdn.microsoft.com/en-us/bb330936.aspx"><Run Text="DynamicQuery" /></Hyperlink>
+			<LineBreak /><Hyperlink Command="{Binding OpenUriCommand}"
+									CommandParameter="http://dynamicjson.codeplex.com/"><Run Text="DynamicJson" /></Hyperlink>
+			<LineBreak /><Hyperlink Command="{Binding OpenUriCommand}"
+									CommandParameter="http://developer.mindtouch.com/SgmlReader"><Run Text="SGMLReader" /></Hyperlink>
+			<LineBreak /><Hyperlink Command="{Binding OpenUriCommand}"
+									CommandParameter="http://dotnetzip.codeplex.com/"><Run Text="DotNetZip" /></Hyperlink>
+			<LineBreak /><Hyperlink Command="{Binding OpenUriCommand}"
+									CommandParameter="http://www.ironpython.net/"><Run Text="IronPython" /></Hyperlink>
+		</TextBlock>
+	</Grid>
+</Window>

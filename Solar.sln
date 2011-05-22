@@ -1,0 +1,36 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Solar", "Solar\Solar.csproj", "{4A5324D5-F7D0-4AB4-90DA-A0E35AAEC53B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lunar", "Lunar\Lunar.csproj", "{E61A6E2F-7738-4FA3-84EA-C9AA4E170F03}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Debug|x86 = Debug|x86
+		Release|Any CPU = Release|Any CPU
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{4A5324D5-F7D0-4AB4-90DA-A0E35AAEC53B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4A5324D5-F7D0-4AB4-90DA-A0E35AAEC53B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4A5324D5-F7D0-4AB4-90DA-A0E35AAEC53B}.Debug|x86.ActiveCfg = Debug|x86
+		{4A5324D5-F7D0-4AB4-90DA-A0E35AAEC53B}.Debug|x86.Build.0 = Debug|x86
+		{4A5324D5-F7D0-4AB4-90DA-A0E35AAEC53B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4A5324D5-F7D0-4AB4-90DA-A0E35AAEC53B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4A5324D5-F7D0-4AB4-90DA-A0E35AAEC53B}.Release|x86.ActiveCfg = Release|x86
+		{4A5324D5-F7D0-4AB4-90DA-A0E35AAEC53B}.Release|x86.Build.0 = Release|x86
+		{E61A6E2F-7738-4FA3-84EA-C9AA4E170F03}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E61A6E2F-7738-4FA3-84EA-C9AA4E170F03}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E61A6E2F-7738-4FA3-84EA-C9AA4E170F03}.Debug|x86.ActiveCfg = Debug|x86
+		{E61A6E2F-7738-4FA3-84EA-C9AA4E170F03}.Debug|x86.Build.0 = Debug|x86
+		{E61A6E2F-7738-4FA3-84EA-C9AA4E170F03}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E61A6E2F-7738-4FA3-84EA-C9AA4E170F03}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E61A6E2F-7738-4FA3-84EA-C9AA4E170F03}.Release|x86.ActiveCfg = Release|x86
+		{E61A6E2F-7738-4FA3-84EA-C9AA4E170F03}.Release|x86.Build.0 = Release|x86
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

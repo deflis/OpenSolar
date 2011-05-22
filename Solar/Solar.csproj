@@ -1,0 +1,377 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{4A5324D5-F7D0-4AB4-90DA-A0E35AAEC53B}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Solar</RootNamespace>
+    <AssemblyName>Solar</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <WarningLevel>4</WarningLevel>
+    <Utf8Output>true</Utf8Output>
+    <ExpressionBlendVersion>4.0.20421.0</ExpressionBlendVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Release\Solar.xml</DocumentationFile>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>solar.ico</ApplicationIcon>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <CodeAnalysisLogFile>bin\Debug\Solar.exe.CodeAnalysisLog.xml</CodeAnalysisLogFile>
+    <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
+    <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSetDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\\Rule Sets</CodeAnalysisRuleSetDirectories>
+    <CodeAnalysisIgnoreBuiltInRuleSets>false</CodeAnalysisIgnoreBuiltInRuleSets>
+    <CodeAnalysisRuleDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
+    <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
+    <CodeAnalysisFailOnMissingRules>false</CodeAnalysisFailOnMissingRules>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <DocumentationFile>bin\Release\Solar.xml</DocumentationFile>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <CodeAnalysisLogFile>bin\Release\Solar.exe.CodeAnalysisLog.xml</CodeAnalysisLogFile>
+    <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
+    <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSetDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\\Rule Sets</CodeAnalysisRuleSetDirectories>
+    <CodeAnalysisIgnoreBuiltInRuleSets>false</CodeAnalysisIgnoreBuiltInRuleSets>
+    <CodeAnalysisRuleDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
+    <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
+    <CodeAnalysisFailOnMissingRules>false</CodeAnalysisFailOnMissingRules>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Ignition">
+      <HintPath>..\Libraries\Ignition.dll</HintPath>
+    </Reference>
+    <Reference Include="Ignition.Presentation">
+      <HintPath>..\Libraries\Ignition.Presentation.dll</HintPath>
+    </Reference>
+    <Reference Include="IronPython">
+      <HintPath>..\Libraries\IronPython.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Dynamic, Version=1.1.0.10, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\Libraries\Microsoft.Dynamic.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Scripting, Version=1.1.0.10, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\Libraries\Microsoft.Scripting.dll</HintPath>
+    </Reference>
+    <Reference Include="PresentationFramework.Aero" />
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+    <Reference Include="Microsoft.CSharp">
+      <Aliases>global</Aliases>
+    </Reference>
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Xaml">
+      <RequiredTargetFramework>4.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="WindowsBase" />
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+  </ItemGroup>
+  <ItemGroup>
+    <ApplicationDefinition Include="App.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </ApplicationDefinition>
+    <Compile Include="ClientParameters.cs" />
+    <Compile Include="Dialogs\AboutWindow.xaml.cs">
+      <DependentUpon>AboutWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\CacheWindow.xaml.cs">
+      <DependentUpon>CacheWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Filtering\ExtensionFilterSource.cs" />
+    <Compile Include="Filtering\ExtensionFilterTerms.cs" />
+    <Compile Include="Filtering\FollowersFilterSource.cs" />
+    <Compile Include="Filtering\FollowingFilterSource.cs" />
+    <Compile Include="Filtering\NearStatusFilterSource.cs" />
+    <Compile Include="Filtering\QueryCacheFilterSource.cs" />
+    <Compile Include="Filtering\RetweetedByMeFilterSource.cs" />
+    <Compile Include="Filtering\SearchCacheFilterSource.cs" />
+    <Compile Include="Filtering\SearchUsersFilterSource.cs" />
+    <Compile Include="Filtering\SourceFilterTerms.cs" />
+    <Compile Include="Filtering\ListIndexFilterSource.cs" />
+    <Compile Include="Filtering\RetweetedToMeFilterSource.cs" />
+    <Compile Include="Filtering\RetweetsOfMeFilterSource.cs" />
+    <Compile Include="Library\AutoCompletion.cs" />
+    <Compile Include="Library\IconDisplay.xaml.cs">
+      <DependentUpon>IconDisplay.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Library\KeyGestureStringConverter.cs" />
+    <Compile Include="Library\LinkContextMenuConverter.cs" />
+    <Compile Include="Library\ImageUriResolver.cs" />
+    <Compile Include="Library\StringIsNullOrEmptyConverter.cs" />
+    <Compile Include="Library\ThumbnailedUri.cs" />
+    <Compile Include="Library\UriBitmapConverter.cs" />
+    <Compile Include="Library\NegativeBooleanConverter.cs" />
+    <Compile Include="Library\StatusesListBox.xaml.cs">
+      <DependentUpon>StatusesListBox.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Models\AccountBoxStyle.cs" />
+    <Compile Include="Models\Category.cs" />
+    <Compile Include="Models\CategoryGroup.cs" />
+    <Compile Include="Models\ClickAction.cs" />
+    <Compile Include="Models\Client.cs" />
+    <Compile Include="Models\Footer.cs" />
+    <Compile Include="Models\NotifyLocation.cs" />
+    <Compile Include="Scripting\ScriptWatcher.cs" />
+    <Compile Include="Models\Settings.cs" />
+    <Compile Include="DateTimeConverter.cs" />
+    <Compile Include="Dialogs\AccountsWindow.xaml.cs">
+      <DependentUpon>AccountsWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\AuthenticateWindow.xaml.cs">
+      <DependentUpon>AuthenticateWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\MultiLineConverter.cs" />
+    <Compile Include="Dialogs\LayoutWindow.xaml.cs">
+      <DependentUpon>LayoutWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Filtering\ContainsFilterTerms.cs" />
+    <Compile Include="Filtering\FavoritesFilterSource.cs" />
+    <Compile Include="Filtering\FilterTerms.cs" />
+    <Compile Include="Filtering\DirectMessagesReceivedFilterSource.cs" />
+    <Compile Include="Filtering\DirectMessagesSentFilterSource.cs" />
+    <Compile Include="Filtering\RegexFilterTerms.cs" />
+    <Compile Include="Filtering\ReplyChainFilterSource.cs" />
+    <Compile Include="Filtering\SentFilterSource.cs" />
+    <Compile Include="Filtering\UserFilterTerms.cs" />
+    <Compile Include="Filtering\WhereFilterTerms.cs" />
+    <Compile Include="Filtering\NothingFilterTerms.cs" />
+    <Compile Include="Filtering\SearchFilterSource.cs" />
+    <Compile Include="Library\IProgressHost.cs" />
+    <Compile Include="Library\DropDownButton.cs" />
+    <Compile Include="Library\DynamicLibrary.cs" />
+    <Compile Include="Library\RelayCommand.cs" />
+    <Compile Include="LinkConverter.cs" />
+    <Compile Include="Library\ProgressBlock.cs" />
+    <Compile Include="Filtering\Filter.cs" />
+    <Compile Include="Filtering\FilterSource.cs" />
+    <Compile Include="Filtering\ListFilterSource.cs" />
+    <Compile Include="Filtering\UserFilterSource.cs" />
+    <Compile Include="Filtering\MentionsFilterSource.cs" />
+    <Compile Include="Filtering\HomeFilterSource.cs" />
+    <Compile Include="Filtering\PublicFilterSource.cs" />
+    <Compile Include="Models\TimelineStyle.cs" />
+    <Compile Include="Models\UpdateInfo.cs" />
+    <Compile Include="Library\NegativeBooleanToVisibilityConverter.cs" />
+    <Compile Include="Scripting\WebClientExtention.cs" />
+    <Compile Include="Windows\ConsoleWindow.xaml.cs">
+      <DependentUpon>ConsoleWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\FootersWindow.xaml.cs">
+      <DependentUpon>FootersWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\FollowManagerWindow.xaml.cs">
+      <DependentUpon>FollowManagerWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\NotifyWindow.xaml.cs">
+      <DependentUpon>NotifyWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\QueryResultWindow.xaml.cs">
+      <DependentUpon>QueryResultWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ShowDialogEventArgs.cs" />
+    <Compile Include="Library\StatusesListBoxCommandHandler.cs" />
+    <Compile Include="Util.cs" />
+    <Page Include="Dialogs\AboutWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Dialogs\AccountsWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Dialogs\AuthenticateWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Dialogs\CacheWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Dialogs\LayoutWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Library\IconDisplay.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Library\StatusesListBox.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Windows\ConsoleWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Windows\FootersWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Windows\FollowManagerWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Windows\MainWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Compile Include="App.xaml.cs">
+      <DependentUpon>App.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Windows\MainWindow.xaml.cs">
+      <DependentUpon>MainWindow.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Page Include="Windows\NotifyWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Windows\QueryResultWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <AppDesigner Include="Properties\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Lunar\Lunar.csproj">
+      <Project>{E61A6E2F-7738-4FA3-84EA-C9AA4E170F03}</Project>
+      <Name>Lunar</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\CloseButton.png" />
+    <Resource Include="Resources\CloseButtonHover.png" />
+    <Resource Include="Resources\CloseButtonPressed.png" />
+    <Resource Include="Resources\Minus.png" />
+    <Resource Include="Resources\Plus.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Favorite.png" />
+    <Resource Include="Resources\Reply.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Favorited.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Protected.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\UpdateCountLeft.png" />
+    <Resource Include="Resources\UpdateCountCenter.png" />
+    <Resource Include="Resources\UpdateCountRight.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Logo.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Message.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="solar.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Retweet.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="readme.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Scripts\Help\bit.ly.py">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Scripts\Help\PostSpeed.py">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Scripts\Help\readme.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Scripts\Help\TLSpeed.py">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Scripts\PixivImageUriResolver.py">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Scripts\UrlExpander\Generic.py">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Scripts\UrlShortener\TinyURL.py">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Scripts\GenericImageUriResolver.py">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Scripts\UrlShortener\goo.gl.py">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Resource Include="Resources\Twitter.png" />
+    <Resource Include="Resources\Refresh.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Scripts\Button\" />
+    <Folder Include="Scripts\Console\" />
+    <Folder Include="Scripts\FilterSource\" />
+    <Folder Include="Scripts\FilterTerms\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
