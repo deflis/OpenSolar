@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Windows.Media;
@@ -22,6 +23,11 @@ namespace Solar
 			{
 				return images.Count;
 			}
+		}
+
+		static UriBitmapConverter()
+		{
+			Directory.CreateDirectory(".imageCache");
 		}
 
 		public static void Clean()
@@ -48,17 +54,28 @@ namespace Solar
 
 			try
 			{
+				MemoryStream ms;
 				lock (value)
-					using (var wc = new WebClient
+				{
+					if (File.Exists(GetCachePath(value)))
 					{
-						Headers =
-					    {
-					        { HttpRequestHeader.UserAgent, "Solar" },
-					    },
-					})
-					using (var ns = wc.OpenRead(value))
-					using (var ms = ns.Freeze())
+						ms = File.OpenRead(GetCachePath(value)).Freeze();
+					}
+					else
 					{
+						using (var wc = new WebClient
+						{
+							Headers =
+							{
+								{ HttpRequestHeader.UserAgent, "Solar" },
+							},
+						})
+						using (var ns = wc.OpenRead(value))
+							ms = ns.Freeze();
+					}
+					using (ms)
+					{
+						File.WriteAllBytes(GetCachePath(value), ms.ToArray());
 						var rt = new BitmapImage();
 
 						rt.BeginInit();
@@ -73,6 +90,7 @@ namespace Solar
 
 						return images.AddOrUpdate(value, new CacheValue(rt), (_, oldValue) => new CacheValue(rt)).Value;
 					}
+				}
 			}
 			catch (Exception ex)
 			{
@@ -80,6 +98,11 @@ namespace Solar
 
 				return null;
 			}
+		}
+
+		private static String GetCachePath(Uri uri)
+		{
+			return @".imageCache\" + (uri.Host + uri.LocalPath).Replace('/', '.');
 		}
 
 		class CacheValue

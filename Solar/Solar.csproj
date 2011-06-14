@@ -121,6 +121,7 @@
     <Compile Include="Dialogs\CacheWindow.xaml.cs">
       <DependentUpon>CacheWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Filtering\EnumerableFilterSource.cs" />
     <Compile Include="Filtering\ExtensionFilterSource.cs" />
     <Compile Include="Filtering\ExtensionFilterTerms.cs" />
     <Compile Include="Filtering\FollowersFilterSource.cs" />
