@@ -3,7 +3,7 @@
 		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 		xmlns:local="clr-namespace:Solar"
 		xmlns:dialogs="clr-namespace:Solar.Dialogs"
-		Title="Solar について"
+		Title="OpenSolar について"
 		Style="{StaticResource DialogWindowStyle}"
 		WindowStartupLocation="CenterOwner"
 		ShowInTaskbar="False"
@@ -46,6 +46,8 @@
 		<TextBlock Grid.Row="1"
 				   Margin="8,8,0,0">
 			<Run Text="Version " /><Run Text="{Binding Source={x:Static local:App.AssemblyVersion}, Mode=OneWay}" />
+			<LineBreak /><Run Text="Maintainanced by " /><Hyperlink Command="{Binding OpenUriCommand}"
+															  CommandParameter="https://github.com/deflis/OpenSolar"><Run Text="OpenSolar Project" /></Hyperlink>
 			<LineBreak /><Run Text="Created by " /><Hyperlink Command="{Binding OpenUriCommand}"
 															  CommandParameter="http://twitter.com/mfakane"><Run Text="@mfakane" /></Hyperlink>
 			<Run Text="(" /><Hyperlink Command="{Binding OpenUriCommand}"

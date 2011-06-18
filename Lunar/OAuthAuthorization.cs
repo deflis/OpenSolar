@@ -61,7 +61,7 @@ namespace Lunar
 		/// </summary>
 		/// <param name="token">アカウント。</param>
 		public OAuthAuthorization(AccountToken token)
-			: this("6Mp7uucDrPfErH1qLiu0bQ", "I2BvMSk5DIpFFdYpMpLvqA0ien8soagmw701gLOtkIk", token)
+            : this("P3nbsIMxxYBubPOviQg", "96kDHNIWPkfb0POch4vuAjwHPXitxg9OqfYvnoXktY", token)
 		{
 		}
 
