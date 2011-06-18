@@ -14,7 +14,7 @@ namespace Lunar
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 		long value;
 
-		StatusID(long value)
+		public StatusID(long value)
 		{
 			this.value = value;
 		}
@@ -78,6 +78,14 @@ namespace Lunar
 				return value.Equals(((StatusID)obj).value);
 
 			return value.Equals(obj);
+		}
+
+		public long Value
+		{
+			get
+			{
+				return this.value;
+			}
 		}
 
 		long IID.Value

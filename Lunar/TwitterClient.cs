@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Threading;
 using Codeplex.Data;
 using Ignition;
 
@@ -319,17 +320,20 @@ namespace Lunar
 
 				try
 				{
-					dynamic rt;
+					return Util.Retry(() =>
+					{
+						dynamic rt;
 
-					if (CacheScope.Current != null)
-						rt = DynamicJson.Parse(CacheScope.Current.ReadWithCaching(new CacheKey(this.Account, baseUri), _ => client.DownloadString(uri)));
-					else
-						rt = DynamicJson.Parse(client.DownloadString(uri));
+						if (CacheScope.Current != null)
+							rt = DynamicJson.Parse(CacheScope.Current.ReadWithCaching(new CacheKey(this.Account, baseUri), _ => client.DownloadString(uri)));
+						else
+							rt = DynamicJson.Parse(client.DownloadString(uri));
 
-					if (authorization != null)
-						SetRateLimit(this.Account, client.ResponseHeaders);
+						if (authorization != null)
+							SetRateLimit(this.Account, client.ResponseHeaders);
 
-					return rt;
+						return rt;
+					});
 				}
 				catch (WebException ex)
 				{
@@ -1918,5 +1922,51 @@ namespace Lunar
 		{
 			this.UploadDynamic(TwitterUriBuilder.ReportSpam(userName), false);
 		}
+	}
+
+	internal static class Util
+	{
+		public static TReturn Retry<TReturn>(Func<TReturn> func, int retryCount = 3)
+		{
+			int i = 0;
+			while (true)
+			{
+				try
+				{
+					var ret = func();
+					return ret;
+				}
+				catch (Exception)
+				{
+					Thread.Sleep(1000);
+					if (++i > retryCount)
+					{
+						throw;
+					}
+				}
+			}
+		}
+
+		public static void Retry(Action action, int retryCount = 3)
+		{
+			int i = 0;
+			while (true)
+			{
+				try
+				{
+					action();
+					return;
+				}
+				catch (Exception)
+				{
+					Thread.Sleep(1000);
+					if (++i > retryCount)
+					{
+						throw;
+					}
+				}
+			}
+		}
+
 	}
 }
