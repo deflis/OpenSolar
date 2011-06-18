@@ -164,7 +164,7 @@ namespace Solar
 		public static Exception Log(Exception ex)
 		{
 #if DEBUG
-            if (!ex.Message.Contains("OAuth") && !ex.Message.Contains("401"))
+            if (!ex.Message.Contains("OAuth") && !ex.Message.Contains("401") && !ex.Message.Contains("API 実行"))
                 throw ex;
 #endif
             lock (App.Current)

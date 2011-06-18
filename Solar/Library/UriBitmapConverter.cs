@@ -197,7 +197,9 @@ namespace Solar
             if (cachePath.ContainsKey(uri))
                 return cachePath[uri];
 
-            var path = @".imageCache\" + BitConverter.ToString(sha1.ComputeHash(System.Text.Encoding.Default.GetBytes(uri.AbsoluteUri))).Replace("-", "");
+            var split_path = uri.AbsolutePath.Split("/");
+
+            var path = @".imageCache\" + (split_path.Length > 2 ?( split_path.Reverse().Skip(1).First() + "-") : "") + BitConverter.ToString(sha1.ComputeHash(System.Text.Encoding.Default.GetBytes(uri.Host + uri.AbsoluteUri))).Replace("-", "") + "." + uri.AbsolutePath.Split(".").Last();
             
             cachePath.Add(uri, path);
             return path;
