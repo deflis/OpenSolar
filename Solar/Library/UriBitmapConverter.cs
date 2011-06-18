@@ -80,10 +80,10 @@ namespace Solar
                         })
                         using (var ns = wc.OpenRead(value))
                             ms = ns.Freeze();
+                        File.WriteAllBytes(GetCachePath(value), ms.ToArray());
                     }
                     using (ms)
                     {
-                        File.WriteAllBytes(GetCachePath(value), ms.ToArray());
                         var rt = new BitmapImage();
 
                         rt.BeginInit();
@@ -130,8 +130,10 @@ namespace Solar
                         MemoryStream ms;
                         lock (value)
                         {
-                            if (File.Exists(GetCachePath(value)))
+                            bool exist;
+                            if (exist = File.Exists(GetCachePath(value)))
                             {
+                                File.SetLastWriteTime(GetCachePath(value), DateTime.Now);
                                 ms = File.OpenRead(GetCachePath(value)).Freeze();
                             }
                             else
@@ -147,23 +149,28 @@ namespace Solar
                                 {
                                     ms = ns.Freeze();
                                 }
-                                using (ms)
+                            }
+                            using (ms)
+                            {
+                                var rt = new BitmapImage();
+
+                                rt.BeginInit();
+                                rt.StreamSource = ms;
+                                rt.CreateOptions = BitmapCreateOptions.IgnoreColorProfile;
+                                rt.CacheOption = BitmapCacheOption.OnLoad;
+                                rt.EndInit();
+                                RenderOptions.SetBitmapScalingMode(rt, BitmapScalingMode.NearestNeighbor);
+
+                                if (rt.CanFreeze)
+                                    rt.Freeze();
+
+                                var image = images.AddOrUpdate(value, new CacheValue(rt), (_, oldValue) => new CacheValue(rt)).Value;
+                                window.Dispatcher.BeginInvoke((Action)(() => func(image)), DispatcherPriority.Background);
+
+                                if (!exist)
                                 {
-                                    var rt = new BitmapImage();
-
-                                    rt.BeginInit();
-                                    rt.StreamSource = ms;
-                                    rt.CreateOptions = BitmapCreateOptions.IgnoreColorProfile;
-                                    rt.CacheOption = BitmapCacheOption.OnLoad;
-                                    rt.EndInit();
-                                    RenderOptions.SetBitmapScalingMode(rt, BitmapScalingMode.NearestNeighbor);
-
-                                    if (rt.CanFreeze)
-                                        rt.Freeze();
-
-                                    var image = images.AddOrUpdate(value, new CacheValue(rt), (_, oldValue) => new CacheValue(rt)).Value;
-                                    window.Dispatcher.BeginInvoke((Action)(() => func(image)), DispatcherPriority.Background);
-                                    return;
+                                    var arr = ms.ToArray();
+                                    File.WriteAllBytes(GetCachePath(value), arr);
                                 }
                             }
                         }
@@ -177,9 +184,17 @@ namespace Solar
                 });
         }
 
-        private static String GetCachePath(Uri uri)
+        protected static System.Security.Cryptography.SHA1CryptoServiceProvider sha1 = new System.Security.Cryptography.SHA1CryptoServiceProvider();
+        static readonly ConcurrentDictionary<Uri, String> cachePath = new ConcurrentDictionary<Uri, String>();
+        protected static String GetCachePath(Uri uri)
         {
-            return @".imageCache\" + (uri.Host + uri.LocalPath).Replace('/', '.');
+            if (cachePath.ContainsKey(uri))
+                return cachePath[uri];
+
+            var path = @".imageCache\" + BitConverter.ToString(sha1.ComputeHash(System.Text.Encoding.Default.GetBytes(uri.AbsoluteUri))).Replace("-", "");
+            
+            cachePath.Add(uri, path);
+            return path;
         }
 
         class CacheValue
