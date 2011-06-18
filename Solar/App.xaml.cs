@@ -163,7 +163,11 @@ namespace Solar
 		/// <returns>指定した例外。</returns>
 		public static Exception Log(Exception ex)
 		{
-			lock (App.Current)
+#if DEBUG
+            if (!ex.Message.Contains("OAuth") && !ex.Message.Contains("401"))
+                throw ex;
+#endif
+            lock (App.Current)
 				File.AppendAllText(Path.Combine(StartupPath, "Solar.slexc"), AssemblyVersion + " " + DateTime.Now + "\r\n" + ex.ToString() + "\r\n----\r\n\r\n");
 
 			return ex;
@@ -172,8 +176,10 @@ namespace Solar
 		void Application_Startup(object sender, StartupEventArgs e)
 		{
 			ServicePointManager.Expect100Continue = false;
+#if !DEBUG
 			AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
-			VisualStylesEnabled.Initialize();
+#endif
+            VisualStylesEnabled.Initialize();
 
 			var current = Process.GetCurrentProcess();
 			var ps = Process.GetProcessesByName(current.ProcessName)

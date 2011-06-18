@@ -17,6 +17,7 @@ namespace Solar.Models
 	/// <summary>
 	/// 設定を表します。
 	/// </summary>
+    [Serializable]
 	public class Settings
 	{
 		/// <summary>
@@ -33,7 +34,7 @@ namespace Solar.Models
 			if (File.Exists(FileName))
 				try
 				{
-					Default = (Settings)XamlServices.Load(FileName);
+                    Default = (Settings)((Settings)XamlServices.Load(FileName)).MemberwiseClone();
 				}
 				catch (XmlException ex)
 				{
@@ -491,38 +492,39 @@ namespace Solar.Models
 		/// </summary>
 		public void Save()
 		{
-			try
-			{
-				var tmp = Path.GetTempFileName();
+            try
+            {
+                var tmp = Path.GetTempFileName();
 
-				if (File.Exists(FileName))
-					File.Copy(FileName, tmp, true);
+                if (File.Exists(FileName))
+                    File.Copy(FileName, tmp, true);
 
-				try
-				{
-					using (var xw = XmlWriter.Create(FileName, new XmlWriterSettings
-					{
-						Indent = true,
-						IndentChars = "\t",
-						NewLineOnAttributes = true,
-					}))
-						XamlServices.Save(xw, Settings.Default);
-				}
-				catch (Exception)
-				{
-					if (File.Exists(tmp))
-						File.Copy(tmp, FileName, true);
+                try
+                {
+                    using (var xw = XmlWriter.Create(FileName, new XmlWriterSettings
+                    {
+                        Indent = true,
+                        IndentChars = "\t",
+                        NewLineOnAttributes = true,
+                    }))
+                        XamlServices.Save(xw, Settings.Default);
+                }
+                catch (Exception)
+                {
+                    if (File.Exists(tmp))
+                        File.Copy(tmp, FileName, true);
 
-					throw;
-				}
-				finally
-				{
-					File.Delete(tmp);
-				}
-			}
-			catch
-			{
-			}
+                    throw;
+                }
+                finally
+                {
+                    File.Delete(tmp);
+                }
+            }
+            catch (Exception ex)
+            {
+                App.Log(ex);
+            }
 		}
 	}
 

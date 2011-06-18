@@ -170,7 +170,13 @@ namespace Solar
                                 if (!exist)
                                 {
                                     var arr = ms.ToArray();
-                                    File.WriteAllBytes(GetCachePath(value), arr);
+                                    try
+                                    {
+                                        File.WriteAllBytes(GetCachePath(value), arr);
+                                    }
+                                    catch (IOException)
+                                    {
+                                    }
                                 }
                             }
                         }
