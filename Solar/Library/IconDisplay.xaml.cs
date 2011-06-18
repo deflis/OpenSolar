@@ -45,13 +45,10 @@ namespace Solar
 			imageUri = this.Source;
 
 			if (imageUri == null)
-				image = null;
+				this.image = null;
 			else
-				Task.Factory.StartNew(() =>
-				{
-					image = (BitmapImage)conv.Convert(imageUri, typeof(Uri), null, null);
-					this.Dispatcher.BeginInvoke((Action)this.InvalidateVisual, DispatcherPriority.Background);
-				});
+                conv.ConvertAsync(imageUri, this, img => { image = (BitmapImage)img; this.InvalidateVisual(); });
+                
 		}
 
 		static void OnSourceChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
