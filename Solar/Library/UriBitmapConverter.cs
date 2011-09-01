@@ -9,6 +9,9 @@ using Ignition;
 using Ignition.Presentation;
 using System.Windows.Threading;
 using System.Threading.Tasks;
+using System.Reactive;
+using System.Reactive.Linq;
+using System.Reactive.Concurrency;
 
 namespace Solar
 {
@@ -17,7 +20,7 @@ namespace Solar
     class UriBitmapConverter : OneWayValueConverter<Uri, BitmapImage>
     {
         static readonly ConcurrentDictionary<Uri, CacheValue> images = new ConcurrentDictionary<Uri, CacheValue>();
-        const int MaxImages = 2000;
+        const int MaxImages = 500;
 
         public static int CacheCount
         {
@@ -38,8 +41,11 @@ namespace Solar
             {
                 lock (images)
                 {
-                    var items = images.AsParallel().Where(_ => _.Value.LastReference < DateTime.Now - TimeSpan.FromHours(1)).OrderByDescending(x => x.Value.ReferenceCount);
-                   items.Take(items.Count() - MaxImages).ForAll(x => images.Remove(x.Key));
+                    images.AsParallel()
+                        .OrderByDescending(x => x.Value.ReferenceCount)
+                        .ThenByDescending(_ => _.Value.LastReference)
+                        .Take(images.Count - MaxImages)
+                        .ForAll(x => images.Remove(x.Key));
                 }
                 GC.Collect();
             }
@@ -52,13 +58,15 @@ namespace Solar
 
         protected override BitmapImage ConvertFromSource(Uri value, object parameter)
         {
-            if (value == null)
-                return null;
-            else if (images.ContainsKey(value))
-                return images[value].Value;
+            lock (images)
+            {
+                if (value == null)
+                    return null;
+                else if (images.ContainsKey(value))
+                    return images[value].Value;
+            }
 
             Clean();
-
 
             try
             {
@@ -112,7 +120,6 @@ namespace Solar
         {
             if (value == null)
             {
-                func(null);
                 return;
             }
             else if (images.ContainsKey(value))
@@ -123,72 +130,62 @@ namespace Solar
 
             Clean();
 
-            Task.Factory.StartNew(() =>
+            try
+            {
+                if (File.Exists(GetCachePath(value)))
                 {
-                    try
+                    lock (value)
                     {
-                        MemoryStream ms;
-                        lock (value)
-                        {
-                            bool exist;
-                            if (exist = File.Exists(GetCachePath(value)))
-                            {
-                                File.SetLastWriteTime(GetCachePath(value), DateTime.Now);
-                                ms = File.OpenRead(GetCachePath(value)).Freeze();
-                            }
-                            else
-                            {
-                                using (var wc = new WebClient
-                                {
-                                    Headers =
-                                    {
-                                        { HttpRequestHeader.UserAgent, "Solar" },
-                                    }
-                                })
-                                using (var ns = wc.OpenRead(value))
-                                {
-                                    ms = ns.Freeze();
-                                }
-                            }
-                            using (ms)
-                            {
-                                var rt = new BitmapImage();
-
-                                rt.BeginInit();
-                                rt.StreamSource = ms;
-                                rt.CreateOptions = BitmapCreateOptions.IgnoreColorProfile;
-                                rt.CacheOption = BitmapCacheOption.OnLoad;
-                                rt.EndInit();
-                                RenderOptions.SetBitmapScalingMode(rt, BitmapScalingMode.NearestNeighbor);
-
-                                if (rt.CanFreeze)
-                                    rt.Freeze();
-
-                                var image = images.AddOrUpdate(value, new CacheValue(rt), (_, oldValue) => new CacheValue(rt)).Value;
-                                window.Dispatcher.BeginInvoke((Action)(() => func(image)), DispatcherPriority.Background);
-
-                                if (!exist)
-                                {
-                                    var arr = ms.ToArray();
-                                    try
-                                    {
-                                        File.WriteAllBytes(GetCachePath(value), arr);
-                                    }
-                                    catch (IOException)
-                                    {
-                                    }
-                                }
-                            }
-                        }
+                        File.SetLastWriteTime(GetCachePath(value), DateTime.Now);
+                        ((Func<string, FileStream>)File.OpenRead).ToAsync()(GetCachePath(value))
+                            .ObserveOn(Scheduler.NewThread)
+                            .SelectMany(_ => Observable.Using(() => _, fs => new[] { fs.Freeze() }.ToObservable()))
+                            .Do(ms => { lock (value) window.Dispatcher.Invoke(func, CreateImage(ms, value)); })
+                            .Subscribe(ms => ms.Dispose(), ex => App.Log(ex), () => { });
                     }
-                    catch (Exception ex)
+                }
+                else
+                {
+                    lock (value)
                     {
-                        App.Log(ex);
-                        window.Dispatcher.BeginInvoke((Action)(() => func(null)), DispatcherPriority.Background);
-                        return;
+                        HttpWebRequest req = (HttpWebRequest)WebRequest.Create(value);
+                        req.UserAgent = "Solar";
+                        req.Timeout = 30000;
+                        Observable.FromAsyncPattern<WebResponse>(req.BeginGetResponse, req.EndGetResponse)()
+                            .ObserveOn(Scheduler.NewThread)
+                            .SelectMany(res => Observable.Using(() => res.GetResponseStream(), ns => new[] { ns.Freeze() }.ToObservable()))
+                            .Do(ms => { lock (value) if (!File.Exists(GetCachePath(value))) File.WriteAllBytes(GetCachePath(value), ms.ToArray()); })
+                            .Do(ms => { lock (value) window.Dispatcher.Invoke(func, CreateImage(ms, value)); })
+                            .Subscribe(ms => ms.Dispose(), ex => App.Log(ex), () => { });
                     }
-                });
+                }
+            }
+            catch (Exception ex)
+            {
+                App.Log(ex);
+                return;
+            }
         }
+
+        BitmapImage CreateImage(Stream ms, Uri value)
+        {
+            var rt = new BitmapImage();
+
+            rt.BeginInit();
+            rt.StreamSource = ms;
+            rt.CreateOptions = BitmapCreateOptions.IgnoreColorProfile;
+            rt.CacheOption = BitmapCacheOption.OnLoad;
+            rt.DecodePixelWidth = 48;
+            rt.DecodePixelHeight = 48;
+            rt.EndInit();
+            RenderOptions.SetBitmapScalingMode(rt, BitmapScalingMode.NearestNeighbor);
+
+            if (rt.CanFreeze)
+                rt.Freeze();
+
+            return images.AddOrUpdate(value, new CacheValue(rt), (_, oldValue) => new CacheValue(rt)).Value;
+        }
+
 
         protected static System.Security.Cryptography.SHA1CryptoServiceProvider sha1 = new System.Security.Cryptography.SHA1CryptoServiceProvider();
         static readonly ConcurrentDictionary<Uri, String> cachePath = new ConcurrentDictionary<Uri, String>();
@@ -199,8 +196,8 @@ namespace Solar
 
             var split_path = uri.AbsolutePath.Split("/");
 
-            var path = @".imageCache\" + (split_path.Length > 2 ?( split_path.Reverse().Skip(1).First() + "-") : "") + BitConverter.ToString(sha1.ComputeHash(System.Text.Encoding.Default.GetBytes(uri.Host + uri.AbsoluteUri))).Replace("-", "") + "." + uri.AbsolutePath.Split(".").Last();
-            
+            var path = @".imageCache\" + (split_path.Length > 2 ? (split_path.Reverse().Skip(1).First() + "-") : "") + BitConverter.ToString(sha1.ComputeHash(System.Text.Encoding.Default.GetBytes(uri.Host + uri.AbsoluteUri))).Replace("-", "") + "." + uri.AbsolutePath.Split(".").Last().Replace("/", "-");
+
             cachePath.Add(uri, path);
             return path;
         }

@@ -25,6 +25,7 @@ namespace Solar
 		TextBox searchTextBox;
 		ScrollViewer subScrollViewer;
 		double verticalOffset;
+
 		int count;
 		readonly char[] searchPrefixes = new[] { ':', '/', '@' };
 		public static readonly DependencyProperty CommandHandlerProperty = DependencyProperty.Register("CommandHandler", typeof(StatusesListBoxCommandHandler), typeof(StatusesListBox), new UIPropertyMetadata(null));

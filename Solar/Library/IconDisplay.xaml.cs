@@ -38,6 +38,7 @@ namespace Solar
 		public IconDisplay()
 		{
 			InitializeComponent();
+            this.CacheMode = new BitmapCache(1);
 		}
 
 		void GetImage()
